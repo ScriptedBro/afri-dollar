@@ -34,6 +34,28 @@ const refreshTokenSchema = z.object({
   refreshToken: z.string().min(1, 'Refresh token is required'),
 });
 
+/**
+ * Map known domain errors to user-friendly messages
+ * Returns generic message for unknown errors to avoid leaking internal details
+ */
+function getErrorMessage(error: Error): string {
+  const knownErrors: Record<string, string> = {
+    'User with this email already exists': 'Email already registered',
+    'User with this phone number already exists': 'Phone number already registered',
+    'Invalid email or password': 'Invalid credentials',
+    'User account is inactive': 'Account is inactive',
+    'Invalid refresh token': 'Invalid refresh token',
+    'Refresh token has been revoked': 'Refresh token has been revoked',
+    'Refresh token has expired': 'Refresh token has expired',
+    'Refresh token does not belong to this user': 'Invalid refresh token',
+    'User not found': 'User not found',
+    'JWT_SECRET environment variable is required': 'Server configuration error',
+    'JWT_REFRESH_SECRET environment variable is required': 'Server configuration error',
+  };
+
+  return knownErrors[error.message] || 'An error occurred';
+}
+
 export const AuthController = {
   /**
    * Register a new user
@@ -85,7 +107,7 @@ export const AuthController = {
 
         res.status(400).json({
           success: false,
-          error: error.message,
+          error: getErrorMessage(error),
         });
         return;
       }
@@ -146,7 +168,7 @@ export const AuthController = {
 
         res.status(401).json({
           success: false,
-          error: error.message,
+          error: getErrorMessage(error),
         });
         return;
       }
@@ -216,7 +238,7 @@ export const AuthController = {
 
         res.status(500).json({
           success: false,
-          error: error.message,
+          error: getErrorMessage(error),
         });
         return;
       }
@@ -276,7 +298,7 @@ export const AuthController = {
 
         res.status(401).json({
           success: false,
-          error: error.message,
+          error: getErrorMessage(error),
         });
         return;
       }
@@ -339,7 +361,7 @@ export const AuthController = {
         if (error.message === 'User not found') {
           res.status(404).json({
             success: false,
-            error: error.message,
+            error: getErrorMessage(error),
           });
         } else {
           res.status(500).json({
