@@ -295,6 +295,8 @@ For support, email dev.mes.anonfedora@gmail.com or open an issue in the reposito
 - Circle
 - The open-source community
 
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/DigiAfricaEra/afri-dollar?utm_source=oss&utm_medium=github&utm_campaign=DigiAfricaEra%2Fafri-dollar&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+
 ## Links
 
 - [GitHub Organization Repository](https://github.com/DigiAfricaEra/afri-dollar)
