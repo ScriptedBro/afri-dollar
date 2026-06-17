@@ -9,26 +9,37 @@ END$$;
 -- Perform safe migration of the role column
 DO $$
 BEGIN
-  -- If the role column already exists and is a character type, migrate the data and alter the type
+  -- Check if the role column already exists
   IF EXISTS (
     SELECT 1 
     FROM information_schema.columns 
     WHERE table_name = 'User' 
-      AND column_name = 'role' 
-      AND data_type IN ('character varying', 'text', 'character')
+      AND table_schema = current_schema()
+      AND column_name = 'role'
   ) THEN
-    -- Update existing string values to match enum
-    UPDATE "User"
-    SET "role" = CASE
-      WHEN UPPER("role") = 'ADMIN' THEN 'ADMIN'
-      ELSE 'USER'
-    END;
+    -- If it's a character type, migrate the data and alter the type
+    IF EXISTS (
+      SELECT 1 
+      FROM information_schema.columns 
+      WHERE table_name = 'User' 
+        AND table_schema = current_schema()
+        AND column_name = 'role' 
+        AND data_type IN ('character varying', 'text', 'character')
+    ) THEN
+      -- Update existing string values to match enum
+      UPDATE "User"
+      SET "role" = CASE
+        WHEN UPPER("role") = 'ADMIN' THEN 'ADMIN'
+        ELSE 'USER'
+      END;
 
-    -- Alter column type to UserRole
-    ALTER TABLE "User" ALTER COLUMN "role" TYPE "UserRole" USING "role"::"UserRole";
-    ALTER TABLE "User" ALTER COLUMN "role" SET DEFAULT 'USER';
+      -- Alter column type to UserRole
+      ALTER TABLE "User" ALTER COLUMN "role" TYPE "UserRole" USING "role"::"UserRole";
+      ALTER TABLE "User" ALTER COLUMN "role" SET DEFAULT 'USER';
+    END IF;
+    -- If column exists but is not character type, assume it's already correct (UserRole enum)
   ELSE
-    -- If it doesn't exist, add it
+    -- Column doesn't exist, add it
     ALTER TABLE "User" ADD COLUMN "role" "UserRole" NOT NULL DEFAULT 'USER';
   END IF;
 END$$;
