@@ -10,11 +10,18 @@ export function PayrollBatchList(): JSX.Element {
     <div className="p-6 border rounded-lg bg-white shadow-sm">
       <h3 className="text-lg font-semibold text-gray-800 mb-4">Payroll Batches</h3>
       <table className="w-full text-left border-collapse">
+        <caption className="sr-only">Payroll batches with date, amount, and status</caption>
         <thead>
           <tr className="border-b">
-            <th className="py-2">Date</th>
-            <th className="py-2">Amount</th>
-            <th className="py-2">Status</th>
+            <th scope="col" className="py-2">
+              Date
+            </th>
+            <th scope="col" className="py-2">
+              Amount
+            </th>
+            <th scope="col" className="py-2">
+              Status
+            </th>
           </tr>
         </thead>
         <tbody>

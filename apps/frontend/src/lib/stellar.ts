@@ -14,5 +14,9 @@ export const loadStellarAccount = async (publicKey: string): Promise<StellarAcco
   if (!response.ok) {
     throw new Error('Failed to load Stellar account');
   }
-  return response.json() as Promise<StellarAccount>;
+  const data = (await response.json()) as { balances?: StellarAccount['balances'] };
+  return {
+    publicKey,
+    balances: data.balances ?? [],
+  };
 };

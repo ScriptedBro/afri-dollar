@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 
+import { useFX } from '../../hooks/useFX';
+
 export function FXCalculator(): JSX.Element {
   const [usdAmount, setUsdAmount] = useState<number>(1);
-  const rate = 1500;
+  const { rates, convert } = useFX();
+  const rate = rates.USD_NGN;
 
   return (
     <div className="p-6 border rounded-lg bg-white shadow-sm flex flex-col gap-4">
@@ -12,8 +15,15 @@ export function FXCalculator(): JSX.Element {
         <input
           id="usd"
           type="number"
+          min={0}
+          step="0.01"
           value={usdAmount}
-          onChange={(e) => setUsdAmount(Number(e.target.value))}
+          onChange={(e) => {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+            const next = e.currentTarget.valueAsNumber;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            setUsdAmount(Number.isFinite(next) && next >= 0 ? next : 0);
+          }}
           className="p-2 border rounded"
         />
       </div>
@@ -22,7 +32,9 @@ export function FXCalculator(): JSX.Element {
       </div>
       <div className="p-3 bg-gray-50 rounded">
         <p className="text-xs text-gray-500">Estimated Nigerian Naira</p>
-        <p className="text-xl font-bold text-gray-800">{(usdAmount * rate).toLocaleString()} NGN</p>
+        <p className="text-xl font-bold text-gray-800">
+          {convert(usdAmount, 'USD_NGN').toLocaleString()} NGN
+        </p>
       </div>
     </div>
   );

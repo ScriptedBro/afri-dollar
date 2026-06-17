@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+import { loadStellarAccount } from '../lib/stellar';
+
 interface WalletState {
   address: string | null;
   balance: number;
@@ -21,11 +23,7 @@ export function useWallet(publicKey?: string): WalletState {
     let isMounted = true;
     setState((prev: WalletState): WalletState => ({ ...prev, loading: true, error: null }));
 
-    fetch(`https://horizon-testnet.stellar.org/accounts/${publicKey}`)
-      .then((res: Response) => {
-        if (!res.ok) throw new Error('Stellar account not found');
-        return res.json();
-      })
+    loadStellarAccount(publicKey)
       .then((data: { balances: Array<{ balance: string; asset_type: string }> }) => {
         if (!isMounted) return;
         const usdcBalance = data.balances.find((b) => b.asset_type === 'credit_alphanum4');

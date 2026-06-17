@@ -16,7 +16,7 @@ const listeners = new Set<(state: GlobalState) => void>();
 interface UseStoreResult {
   walletAddress: string | null;
   balance: number;
-  setWallet: (address: string, balance: number) => void;
+  setWallet: (address: string | null, balance: number) => void;
 }
 
 export function useStore(): UseStoreResult {
@@ -30,7 +30,7 @@ export function useStore(): UseStoreResult {
     };
   }, []);
 
-  const setWallet = (address: string, balance: number): void => {
+  const setWallet = (address: string | null, balance: number): void => {
     globalState = { ...globalState, walletAddress: address, balance };
     listeners.forEach((l) => l(globalState));
   };
